@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { 
   FileText, 
   Home, 
@@ -60,6 +59,7 @@ const NavItem = ({
 
 export function Sidebar({ open, setOpen }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed);
@@ -67,6 +67,11 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const isPathActive = (path: string) => {
+    return location.pathname === path || 
+           (path !== '/' && location.pathname.startsWith(path));
   };
 
   return (
@@ -89,13 +94,13 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
         <div className="flex items-center justify-between h-16 px-4 border-b border-nepal-lightgray">
           <div className="flex items-center">
             <img
-              src="/placeholder.svg"
-              alt="Logo"
-              className="h-8 w-8"
+              src="/image.png"
+              alt="Nyaye Logo"
+              className="h-9 w-9 object-contain"
             />
             {!collapsed && (
               <h2 className="ml-2 text-lg font-semibold text-nepal-charcoal">
-                <span className="text-primary">Nyaya</span> Portal
+                <span className="text-primary">Nyaye</span> Portal
               </h2>
             )}
           </div>
@@ -118,7 +123,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
               icon={Home}
               title="Dashboard"
               subtitle="Overview"
-              active={true}
+              active={isPathActive('/')}
               collapsed={collapsed}
             />
             <NavItem
@@ -126,6 +131,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
               icon={FileText}
               title="Petitions"
               subtitle="Case Management"
+              active={isPathActive('/petitions')}
               collapsed={collapsed}
             />
             <NavItem
@@ -133,6 +139,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
               icon={Users}
               title="People"
               subtitle="Complainants & Defendants"
+              active={isPathActive('/people')}
               collapsed={collapsed}
             />
             <NavItem
@@ -140,6 +147,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
               icon={Search}
               title="Search"
               subtitle="Find Cases"
+              active={isPathActive('/search')}
               collapsed={collapsed}
             />
             <NavItem
@@ -147,6 +155,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
               icon={Calendar}
               title="Calendar"
               subtitle="Schedule & Hearings"
+              active={isPathActive('/calendar')}
               collapsed={collapsed}
             />
             <NavItem
@@ -154,6 +163,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
               icon={BarChart3}
               title="Reports"
               subtitle="Analytics & Statistics"
+              active={isPathActive('/reports')}
               collapsed={collapsed}
             />
           </nav>
@@ -165,6 +175,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
             icon={Settings}
             title="Settings"
             subtitle="System Configuration"
+            active={isPathActive('/settings')}
             collapsed={collapsed}
           />
           <Button

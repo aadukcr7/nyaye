@@ -41,8 +41,8 @@ interface Case {
 
 export default function Petitions() {
   const [searchText, setSearchText] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -191,8 +191,8 @@ export default function Petitions() {
       caseItem.defendantName.toLowerCase().includes(searchText.toLowerCase()) ||
       caseItem.location.toLowerCase().includes(searchText.toLowerCase());
     
-    const matchesStatus = statusFilter === "" || caseItem.status === statusFilter;
-    const matchesType = typeFilter === "" || caseItem.type === typeFilter;
+    const matchesStatus = statusFilter === null || caseItem.status === statusFilter;
+    const matchesType = typeFilter === null || caseItem.type === typeFilter;
     
     return matchesSearch && matchesStatus && matchesType;
   });
@@ -207,8 +207,8 @@ export default function Petitions() {
 
   const clearFilters = () => {
     setSearchText("");
-    setStatusFilter("");
-    setTypeFilter("");
+    setStatusFilter(null);
+    setTypeFilter(null);
     setCurrentPage(1);
   };
 
@@ -247,12 +247,12 @@ export default function Petitions() {
               />
             </div>
             
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter || undefined} onValueChange={setStatusFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="investigation">Under Investigation</SelectItem>
                 <SelectItem value="resolved">Resolved</SelectItem>
@@ -260,12 +260,12 @@ export default function Petitions() {
               </SelectContent>
             </Select>
             
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <Select value={typeFilter || undefined} onValueChange={setTypeFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="Filter by case type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 {caseTypes.map((type) => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}

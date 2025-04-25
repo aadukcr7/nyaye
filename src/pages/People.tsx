@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,7 @@ import {
   AlertCircle,
   User,
   ArrowUpDown,
+  Loader2,
 } from "lucide-react";
 import { 
   Pagination, 
@@ -47,6 +48,9 @@ import {
   PaginationPrevious 
 } from "@/components/ui/pagination";
 import { Card } from "@/components/ui/card";
+
+// Lazy load the AddPersonForm component to improve initial render performance
+const AddPersonForm = lazy(() => import("@/components/people/AddPersonForm"));
 
 interface Person {
   id: string;
@@ -407,7 +411,7 @@ export default function People() {
                 <UserPlus className="mr-2 h-4 w-4" /> Add Person
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="sm:max-w-[600px] overscroll-contain will-change-transform">
               <DialogHeader>
                 <DialogTitle>Add New Person</DialogTitle>
                 <DialogDescription>
@@ -415,111 +419,11 @@ export default function People() {
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name (English)</Label>
-                  <Input id="name" placeholder="Enter full name" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="nepaliName" className="nepali-text">पूरा नाम</Label>
-                  <Input id="nepaliName" placeholder="पूरा नाम लेख्नुहोस्" className="nepali-text" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="type">Person Type</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="complainant">Complainant</SelectItem>
-                      <SelectItem value="defendant">Defendant</SelectItem>
-                      <SelectItem value="witness">Witness</SelectItem>
-                      <SelectItem value="lawyer">Lawyer/Advocate</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="gender">Gender</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="age">Age</Label>
-                  <Input id="age" type="number" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="idType">ID Type</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select ID type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="citizenship">Citizenship</SelectItem>
-                      <SelectItem value="passport">Passport</SelectItem>
-                      <SelectItem value="license">Driver's License</SelectItem>
-                      <SelectItem value="bar">Bar Association</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="idNumber">ID Number</Label>
-                  <Input id="idNumber" placeholder="Enter ID number" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="occupation">Occupation</Label>
-                  <Input id="occupation" placeholder="Enter occupation" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="contact">Contact Number</Label>
-                  <Input id="contact" placeholder="Enter contact number" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" placeholder="Enter email address" />
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input id="address" placeholder="Enter full address" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="district">District</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select district" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="kathmandu">Kathmandu</SelectItem>
-                      <SelectItem value="lalitpur">Lalitpur</SelectItem>
-                      <SelectItem value="bhaktapur">Bhaktapur</SelectItem>
-                      <SelectItem value="kavre">Kavre</SelectItem>
-                      <SelectItem value="makwanpur">Makwanpur</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="photo">Photo</Label>
-                  <Input id="photo" type="file" />
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <Label htmlFor="notes">Additional Notes</Label>
-                  <Textarea id="notes" placeholder="Any additional information..." />
-                </div>
-              </div>
-              
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsNewPersonDialogOpen(false)}>Cancel</Button>
-                <Button onClick={() => setIsNewPersonDialogOpen(false)}>Save Person</Button>
-              </DialogFooter>
+              <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
+                {isNewPersonDialogOpen && (
+                  <AddPersonForm onCancel={() => setIsNewPersonDialogOpen(false)} onSave={() => setIsNewPersonDialogOpen(false)} />
+                )}
+              </Suspense>
             </DialogContent>
           </Dialog>
         </div>
